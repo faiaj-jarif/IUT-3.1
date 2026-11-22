@@ -1,0 +1,436 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Islamic University of Technology (IUT) Assignment Title Page 
+% LaTeX Template
+% Version 1.0 (13/11/23)
+%
+% This template has been modified from:
+% https://www.overleaf.com/latex/templates/uppsala-university-template/jvjprsfnzgbj
+%
+% Original author:
+% WikiBooks (http://en.wikibooks.org/wiki/LaTeX/Title_Creation)
+% Modified by Ishmam Tashdeed to fit IUT
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[12pt]{article}
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{amsmath}
+\usepackage{lipsum}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage[colorlinks = true,
+linkcolor = blue,
+urlcolor  = blue,
+citecolor = blue,
+anchorcolor = blue]{hyperref}
+\usepackage{listings}
+\setlength{\marginparwidth}{2cm}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{xcolor}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{backcolour},   
+	commentstyle=\color{codegreen},
+	keywordstyle=\color{magenta},
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\ttfamily\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2
+}
+
+\lstset{style=mystyle}
+\graphicspath{ {./images/} }
+
+\begin{document}
+	
+	\begin{titlepage}
+		
+		\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+		
+		\center
+		
+		%----------------------------------------------------------------------------------------
+		%	HEADING SECTIONS
+		%----------------------------------------------------------------------------------------
+		
+		\textsc{\LARGE Islamic University of Technology}\\[1.5cm]
+		\includegraphics[scale=0.35]{iut_logo.png}\\[1cm]
+		\textsc{\Large Server Programming}\\[0.5cm]
+		\textsc{\large SWE 4538}\\[0.5cm]
+		
+		%----------------------------------------------------------------------------------------
+		%	TITLE SECTION
+		%----------------------------------------------------------------------------------------
+		
+		\HRule \\[0.4cm]
+		{ \huge \bfseries Lab 1}\\[0.4cm]
+		\large Building First REST API with FastAPI\\
+		\HRule \\[1.5cm]
+		
+		%----------------------------------------------------------------------------------------
+		%	AUTHOR SECTION
+		%----------------------------------------------------------------------------------------
+		
+		\begin{minipage}{0.4\textwidth}
+			\begin{centering} \large
+				\emph{Author:}\\
+				Mohammad Faiaj Jarif\\
+				230042152\\
+			\end{centering}
+		\end{minipage}\\[2cm]
+		
+		%----------------------------------------------------------------------------------------
+		%	DATE SECTION
+		%----------------------------------------------------------------------------------------
+		
+		{\large \today}\\[2cm]
+		
+		\vfill
+		
+	\end{titlepage}
+	
+	\pagenumbering{roman}
+	\tableofcontents
+	\newpage
+	\pagenumbering{arabic}
+	\newpage
+	
+	%----------------------------------------------------------------------------------------
+	%	INTRODUCTION
+	%----------------------------------------------------------------------------------------
+	\section{Introduction}
+	
+	In this lab, we built a small web server and explored how clients communicate with servers using HTTP. We created a simple API for \textbf{E-Shop}, an e-commerce application using \textbf{Python} and the \textbf{FastAPI} framework. The lab covered creating routes that handle GET and POST requests, working with path parameters, query parameters, and JSON data, and testing API endpoints using FastAPI's interactive documentation.
+	
+	\subsection{Learning Outcomes}
+	
+	By the end of this lab, we should be able to:
+	
+	\begin{enumerate}
+		\item Explain the roles of a client, server, HTTP request, and HTTP response.
+		\item Set up and run a FastAPI development server.
+		\item Create routes that handle GET and POST requests.
+		\item Work with path parameters, query parameters, and JSON data.
+		\item Test API endpoints using FastAPI's interactive documentation.
+		\item Explain why data stored in a Python list disappears when a server restarts.
+	\end{enumerate}
+	
+	\newpage
+	
+	%----------------------------------------------------------------------------------------
+	%	TASK A: GUIDED SETUP AND FIRST API
+	%----------------------------------------------------------------------------------------
+	\section{Part A: Guided Setup and First API}
+	
+	\subsection{Task A0 -- Check Python Installation}
+	
+	We verified that Python 3.10+ is installed and available from the terminal by running:
+	
+	\begin{lstlisting}[language=bash, caption=Checking Python version, numbers=none, frame=single, framesep=10pt, xleftmargin=1.5em, aboveskip=1.5em, abovecaptionskip=1em]
+	python --version
+	\end{lstlisting}
+	
+	\subsection{Task A1 -- Set Up Workspace}
+	
+	We created a folder named \texttt{eshop-lab1}, set up a virtual environment, and installed FastAPI:
+	
+	\begin{lstlisting}[language=bash, caption=Setting up the workspace, numbers=none, frame=single, framesep=10pt, xleftmargin=1.5em, aboveskip=1.5em, abovecaptionskip=1em]
+		
+	python -m venv .venv
+	.venv\Scripts\Activate.ps1
+	python -m pip install "fastapi[standard]"
+		
+	\end{lstlisting}
+	
+	\vfill
+	
+	\subsection{Task A2 -- Create First Server}
+	
+	We created \texttt{main.py} with a root endpoint that returns a welcome message.
+	
+	\begin{lstlisting}[language=Python, caption=Task A2 -- First server endpoint, numbers=none, frame=single, framesep=10pt, xleftmargin=1.5em, aboveskip=1.5em, abovecaptionskip=1em]
+		
+	from fastapi import FastAPI, HTTPException
+		
+	app = FastAPI()
+		
+	@app.get("/")
+	def home():
+		return {"message": "Welcome to Server Programming, Jarif"}
+		
+	\end{lstlisting}
+	
+	The server was started using:
+	\begin{lstlisting}[language=bash, caption=Starting the development server, numbers=none, frame=single, framesep=10pt, xleftmargin=1.5em, aboveskip=1.5em, abovecaptionskip=1em]
+		
+	fastapi dev main.py
+		
+	\end{lstlisting}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{img-1}
+		\caption{Task A2 -- Welcome message at the root endpoint.}
+		\label{fig:task_a2}
+	\end{figure}
+	
+	\bigskip
+	\bigskip
+	
+	%----------------------------------------------------------------------------------------
+	%	TASK B: ROUTES AND PARAMETERS
+	%----------------------------------------------------------------------------------------
+	\section{Part B: Routes and Parameters}
+	
+	\subsection{Task B1 -- Personalized Greeting}
+	
+	We created a GET endpoint \texttt{/hello/\{name\}} that accepts a name as a path parameter and returns a personalized greeting.
+	
+	\begin{lstlisting}[language=Python, caption=Task B1 -- Personalized greeting endpoint, numbers=none, frame=single, framesep=10pt, xleftmargin=1.5em, aboveskip=1.5em, abovecaptionskip=1em]
+		
+	@app.get("/hello/{name}")
+	def get_hello(name: str):
+		return {"message": f"Hello, {name}!"}
+		
+	\end{lstlisting}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{img-2} 
+		\caption{Task B1 -- Personalized greeting endpoint output.}
+		\label{fig:task_b1}
+	\end{figure}
+	
+	\subsection{Task B2 -- Square of a Number}
+	
+	We created a GET endpoint \texttt{/square/\{number\}} that accepts an integer path parameter and returns the number along with its square.
+	
+	\begin{lstlisting}[language=Python, caption=Task B2 -- Square endpoint, numbers=none, frame=single, framesep=10pt, xleftmargin=1.5em, aboveskip=1.5em, abovecaptionskip=1em]
+		
+	@app.get("/square/{number}")
+	def get_square(number: int):
+		return {"number": number, "square": number * number}
+	\end{lstlisting}
+	
+	\begin{figure}[H]
+		\centering
+
+		\includegraphics[width=\textwidth]{img-3}
+		\caption{Task B2 -- Square endpoint output for a sample input.}
+		\label{fig:task_b2}
+	\end{figure}
+	
+	\newpage
+	
+	%----------------------------------------------------------------------------------------
+	%	TASK C: FIRST E-SHOP API
+	%----------------------------------------------------------------------------------------
+	\section{Part C: First E-Shop API}
+	
+	We defined a product catalog stored in memory as a Python list with at least 10 entries:
+	
+	\begin{lstlisting}[language=Python, caption=Product catalog data, numbers=none, frame=single, framesep=10pt, xleftmargin=1.5em, aboveskip=1.5em, abovecaptionskip=1em]
+		
+	products = [
+		{"id": 1, "name": "Laptop", "price": 75000},
+		{"id": 2, "name": "Mouse", "price": 800},
+		{"id": 3, "name": "Keyboard", "price": 1500},
+		{"id": 4, "name": "Monitor", "price": 12000},
+		{"id": 5, "name": "Headphone", "price": 2500},
+		{"id": 6, "name": "Smartphone", "price": 35000},
+		{"id": 7, "name": "Tablet", "price": 22000},
+		{"id": 8, "name": "Printer", "price": 9500},
+		{"id": 9, "name": "Webcam", "price": 1800},
+		{"id": 10, "name": "USB Drive", "price": 700},
+	]
+	\end{lstlisting}
+	
+	\textbf{Note on code ordering:} In the actual \texttt{main.py} file, the endpoints for Tasks C1 and C2 are placed \emph{after} the endpoints for Tasks E1 and E2. This is because FastAPI matches routes in the order they are defined. If the parameterized route \texttt{/products/\allowbreak\{product\_id\}} were defined before \texttt{/products/\allowbreak search} and \texttt{/products/\allowbreak affordable}, it would capture the words ``search'' and ``affordable'' as product IDs and cause errors. By placing the fixed paths first, we avoid this routing conflict.
+	
+	
+	\vfill
+	
+	\subsection{Task C1 -- List All Products}
+	
+	We implemented a GET endpoint \texttt{/products} that returns the entire products list.
+	
+	\begin{lstlisting}[language=Python, caption=Task C1 -- List all products, numbers=none, frame=single, framesep=10pt, xleftmargin=1.5em, aboveskip=1.5em, abovecaptionskip=1em]
+		
+	@app.get("/products")
+	def get_products():
+		return {"list": products}
+	\end{lstlisting}
+	
+	\begin{figure}[H]
+		\centering
+
+		\includegraphics[width=25em, height=50em]{img-4} 
+		\caption{Task C1 -- Listing all products.}
+		\label{fig:task_c1}
+	\end{figure}
+	
+	\subsection{Task C2 -- Get Product by ID}
+	
+	We implemented a GET endpoint \texttt{/products/\{product\_id\}} that returns a single product by its ID, or a 404 error if not found.
+	
+	\begin{lstlisting}[language=Python, caption=Task C2 -- Get product by ID, numbers=none, frame=single, framesep=10pt, xleftmargin=1.5em, aboveskip=1.5em, abovecaptionskip=1em]
+		
+	@app.get("/products/{product_id}")
+	def get_product_by_id(product_id: int):
+		
+	for product in products:
+		if product["id"] == product_id: 
+			return product
+		
+	raise HTTPException(status_code=404, detail="Product not found")
+	\end{lstlisting}
+	
+	\begin{figure}[H]
+		\centering
+
+		\includegraphics[width=\textwidth]{img-5}  % Replace example-image with task_c2
+		\caption{Task C2 -- Fetching a product by its ID.}
+		\label{fig:task_c2}
+	\end{figure}
+	
+	\newpage
+	
+	%----------------------------------------------------------------------------------------
+	%	TASK D: ADDING PRODUCTS
+	%----------------------------------------------------------------------------------------
+	\section{Part D: Adding Products with POST}
+	
+	\subsection{Task D1 -- Define the Request Body Model}
+	
+	We defined a Pydantic model \texttt{ProductCreate} to validate incoming JSON data for creating new products.
+	
+	\begin{lstlisting}[language=Python, caption=Task D1 -- Pydantic model for product creation, numbers=none, frame=single, framesep=10pt, xleftmargin=1.5em, aboveskip=1.5em, abovecaptionskip=1em]
+	from pydantic import BaseModel
+		
+	class ProductCreate(BaseModel):
+		name: str
+		price: float
+	\end{lstlisting}
+	
+	\subsection{Task D2 -- POST Endpoint to Add a Product}
+	
+	We implemented a POST endpoint \texttt{/addProduct} that accepts a JSON body, creates a new product with an auto-generated ID, appends it to the list, and returns the created product.
+	
+	\begin{lstlisting}[language=Python, caption=Task D2 -- Add product endpoint, numbers=none, frame=single, framesep=10pt, xleftmargin=1.5em, aboveskip=1.5em, abovecaptionskip=1em]
+	@app.post("/addProduct")
+	def insert_product(product: ProductCreate):
+		
+		new_product = {
+			"id": len(products) + 1,
+			"name": product.name,
+			"price": product.price
+		}
+		
+		products.append(new_product)
+		return new_product
+	\end{lstlisting}
+	
+	\begin{figure}[H]
+		\centering
+
+		\includegraphics[width=\textwidth]{img-6}
+		\caption{Task D2 -- Adding a new product via POST request.}
+		\label{fig:task_d2}
+	\end{figure}
+	
+	\bigskip
+	\bigskip
+	
+	%----------------------------------------------------------------------------------------
+	%	TASK E: FILTERING AND SEARCH
+	%----------------------------------------------------------------------------------------
+	\section{Part E: Filtering and Search}
+	
+	\subsection{Task E1 -- Search Products by Name}
+	
+	We implemented a GET endpoint \texttt{/products/search} that accepts a query parameter \texttt{name} and returns products whose names contain the supplied text, ignoring capitalization.
+	
+	\begin{lstlisting}[language=Python, caption=Task E1 -- Search by name, numbers=none, frame=single, framesep=10pt, xleftmargin=1.5em, aboveskip=1.5em, abovecaptionskip=1em]
+	@app.get("/products/search")
+	def search_by_name(name: str):
+		
+		ans = []
+		for product in products:
+			if name.lower() in product["name"].lower():
+				ans.append(product)
+		
+		return {"list": ans}
+	\end{lstlisting}
+	
+	\begin{figure}[H]
+		\centering
+
+		\includegraphics[width=\textwidth]{img-7} 
+		\caption{Task E1 -- Searching products by name.}
+		\label{fig:task_e1}
+	\end{figure}
+	
+	\bigskip
+	\medskip
+	\smallskip
+	
+	\subsection{Task E2 -- Filter Products by Price}
+	
+	We implemented a GET endpoint \texttt{/products/affordable} that accepts a query parameter \texttt{max\_price} and returns products with prices less than or equal to the given value.
+	
+	\begin{lstlisting}[language=Python, caption=Task E2 -- Filter by price, numbers=none, frame=single, framesep=10pt, xleftmargin=1.5em, aboveskip=1.5em, abovecaptionskip=1em]
+	@app.get("/products/affordable")
+	def filter_by_price(max_price: int):
+		ans = []
+		for product in products:
+			if product["price"] <= max_price:
+				ans.append(product)
+		
+		return {"list": ans}
+	\end{lstlisting}
+	
+	\begin{figure}[H]
+		\centering
+
+		\includegraphics[width=\textwidth]{img-8}  
+		\caption{Task E2 -- Filtering products by maximum price.}
+		\label{fig:task_e2}
+	\end{figure}
+	
+	\newpage
+	
+	%----------------------------------------------------------------------------------------
+	%	CONCLUSION
+	%----------------------------------------------------------------------------------------
+	\section{Conclusion}
+	
+	In this lab, we successfully built a REST API for an E-Shop application using FastAPI. We learned how to:
+	
+	\begin{itemize}
+		\item Set up a FastAPI development environment with a virtual environment.
+		\item Create GET endpoints with path parameters and query parameters.
+		\item Create a POST endpoint that accepts JSON request bodies validated by Pydantic models.
+		\item Handle errors using \texttt{HTTPException} for cases like missing products.
+		\item Manage route ordering to prevent parameterized routes from capturing fixed path segments.
+	\end{itemize}
+	
+\end{document}
