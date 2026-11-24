@@ -1,0 +1,5 @@
+.venv/
+ParcelDock/.env
+.vscode/
+ParcelDock/__pycache__/
+
